@@ -159,7 +159,8 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="gRPC-系列——grpc超时传递原理"><a href="#gRPC-系列——grpc超时传递原理" class="headerlink" title="gRPC 系列——grpc超时传递原理"></a>gRPC 系列——grpc超时传递原理</h1><h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>有个业务方反馈说日志中偶尔出现 xorm 抛出来的 <code>context deadline exceeded</code> 的报错，想咨询下是什么原因。业务方实现的 gRPC Handler 大概代码如下：</p>
+    <section class="markdown-content"><h1 id="gRPC-系列——grpc超时传递原理"><a href="#gRPC-系列——grpc超时传递原理" class="headerlink" title="gRPC 系列——grpc超时传递原理"></a>gRPC 系列——grpc超时传递原理</h1><p><strong>[作者简介]</strong> 郑伟，小米信息技术部架构组</p>
+<h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>有个业务方反馈说日志中偶尔出现 xorm 抛出来的 <code>context deadline exceeded</code> 的报错，想咨询下是什么原因。业务方实现的 gRPC Handler 大概代码如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s Svc)</span> <span class="title">BizHandler</span><span class="params">(ctx context.Context, r *projectv1.BizHandlerRequest)</span> <span class="params">(*projectv1.BizHandlerResponse, error)</span></span> &#123;</span><br><span class="line">  <span class="keyword">var</span> bean dao.Bean</span><br><span class="line">  <span class="comment">// 查询某个记录</span></span><br><span class="line">  <span class="keyword">if</span> err := db.W().Find(ctx, &amp;bean); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>目前业务方使用过的 xorm 是我们改造过的，函数签名中都添加了 ctx 参数，目的是为了接入 OpenTracing 做分布式追踪。</p>
 <p>业务方反馈的这个 <code>context deadline execcded</code> 问题应该是出在查询 bean 的时候使用了带 timeout 的 ctx，如果这个 ctx 的 timeout 时间很短，有可能会在执行查询操作前就抛出 <code>context deadline execcded</code> 错误。</p>
@@ -177,6 +178,7 @@
 <p>有朋友可能想到了 metadata，是否 gRPC 请求链上游设置了超时后，gRPC 框架底层将过期时间放在 metadata 里了？遗憾的是我们打印 metadata 后发现并未发现 timeout 字段踪迹。那么超时时间到底是怎样传递的呢？以 <code>grpc-go</code> 源码为例，我们来找下线索。</p>
 <p>我们知道 gRPC 基于 HTTP2，HTTP2 传输的最小单位是 Frame（帧）。HTTP2 的帧包含很多类型：<code>DATA Frame</code>、<code>HEADERS Frame</code>、<code>PRIORITY Frame</code>、<code>RST_STREAM Frame</code>、<code>CONTINUATON Frame</code> 等。一个 HTTP2 请求/响应可以被拆成多个帧并行发送，每一帧都有一个 StreamID 来标记属于哪个 Stream。服务端收到 Frame 后，根据 StreamID 组装出原始请求数据。</p>
 <img src="/2019/12/30/grpc-deadline/2019-12-30-17-53-41.png">
+<!-- [](2019-12-30-17-53-41.png) -->
 <p>对于 gRPC 而言，Data Frame 用来存放请求的 response payload；Headers Frame 可用来存放一些需要进行跨进程传递的数据，比如 <code>grpc-status（RPC 请求状态码）</code> 、 <code>:path（RPC 完整路径）</code> 等。那么超时时间是否也通过 HEADERS Frame 传递呢？</p>
 <h3 id="客户端设置-timeout"><a href="#客户端设置-timeout" class="headerlink" title="客户端设置 timeout"></a>客户端设置 timeout</h3><p>我们知道，用户定义好 protobuf 并通过 protoc 生成桩代码后，桩代码中已经包含了 gRPCCient 接口的实现，每一个在 protobuf 中定义的 RPC，底层都会通过 ClientConn. Invoke 向服务端发起调用：</p>
 <p>比如对于这样的 protobuf：</p>
