@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://xiaomi-info.github.com/"/>
-  <updated>2020-01-02T10:01:33.511Z</updated>
+  <updated>2020-01-03T01:39:29.286Z</updated>
   <id>http://xiaomi-info.github.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>投稿须知</title>
+    <link href="http://xiaomi-info.github.com/2020/01/03/contribution/"/>
+    <id>http://xiaomi-info.github.com/2020/01/03/contribution/</id>
+    <published>2020-01-03T01:37:47.000Z</published>
+    <updated>2020-01-03T01:39:29.286Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="投稿须知"><a href="#投稿须知" class="headerlink" title="投稿须知"></a>投稿须知</h1><p><strong>[作者简介]</strong> 郑伟，小米信息技术部架构组</p><p><strong>注：目前暂时只接受部门内部投稿，本文只是对部门内部同事提供投稿指导。</strong></p><p>目前我们维护了 <a href="https://xiaomi-info.github.io" target="_blank" rel="noopener">https://xiaomi-info.github.io</a> 和信息技术部公众号两个平台，同时会定期的产出技术文章在这两个平台上发表。</p><p>为让大家明确投稿文章范围及文章格式等要求，我们整理了一份投稿指导方案以供大家参考。</p><h2 id="投稿方式"><a href="#投稿方式" class="headerlink" title="投稿方式"></a>投稿方式</h2><ul><li>目前 xiaomi-info、信息技术部公众号均可同时登出稿件。由信息技术部架构组统一评审、校正稿件。</li><li>如有技术文章需要投稿，可以先提前联系 jin.zhang(a)xiaomi.com、zhengwei6(a)xiaomi.com。</li><li>所有稿件我们尽量保证在 24 小时内审核完毕，业务方可以对提出的修改建议进行更新。</li></ul><h2 id="投稿流程"><a href="#投稿流程" class="headerlink" title="投稿流程"></a>投稿流程</h2><ul><li>投稿技术文章只接收 markdown 格式，相关语法可以参考 <a href="https://markdown-zh.readthedocs.io/en/latest/" target="_blank" rel="noopener">markdown-zh</a>；</li><li>目前所有技术文章托管于 info-arch/xiaomi-info.github.io 仓库。用户文章的编辑和发布流程一般如下：<ul><li>git clone 仓库到本地</li><li>git checkout -b feature/your-feature-name 分支，并在 source/_posts 目录下创建相应的 markdown 文件。<br>一个文章应该只包含一个 markdown 文件，markdown 文件名应当采用 my-article-about-something.md 的中划线命名法。<br>markdown 文件名应当尽量简短，使用英文和数字。（可参考 source/_posts/mysql-implicit-conversion.md）</li><li>技术文章内如果引用图片，可以在 source/_posts 目录下创建和 markdown 文件同名文件夹，将图片移动到该文件夹内。<br>同时在 markdown 中通过  方式引用。（可参考 source/_posts/mysql-implicit-conversion.md）</li><li>编辑完毕后，push 分支到仓库，并提交 Merge Request，请求合并到 master 分支。</li><li>我们收到 Merge Request 请求后，会对文章进行评审，并提出修改意见。</li><li>用户修改完毕确认无误后，可合并到 master 分支。随后我们会同步到 xiaomi-info 和微信公众号。</li><li>目前支持投稿的文章领域包括：大数据、架构设计、后台开发、编程语言、数据库、Web 前端、移动开发等。</li></ul></li><li>投稿文章应尽量做到<ul><li>内容整洁，结构明确，分段合理。</li><li>标点符号规范，比如全角符号和半角符号。</li><li>注意专有名词大小写，比如 OK（不要写成 ok）、HTTP（不要写成 http）、JSON（不要写成 json）、MySQL（不要写成 mysql）。</li><li>注意中英文混排，中英文之间、中文数字之间都要留有空格，可参考 <a href="https://github.com/sparanoid/chinese-copywriting-guidelines" target="_blank" rel="noopener">「中文排版指北」</a>。</li></ul></li><li>所有投稿文章必须是原创。</li></ul><p><strong>作者</strong></p><p>郑伟，小米信息技术部架构组</p><p><strong>招聘</strong></p><p>信息部是小米公司整体系统规划建设的核心部门，支撑公司国内外的线上线下销售服务体系、供应链体系、ERP 体系、内网 OA 体系、数据决策体系等精细化管控的执行落地工作，服务小米内部所有的业务部门以及 40 家生态链公司。</p><p>同时部门承担大数据基础平台研发和微服务体系建设落，语言涉及 Java、Go，长年虚位以待对大数据处理、大型电商后端系统、微服务落地有深入理解和实践的各路英雄。</p><p>欢迎投递简历：jin.zhang(a)xiaomi.com（武汉）</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;投稿须知&quot;&gt;&lt;a href=&quot;#投稿须知&quot; class=&quot;headerlink&quot; title=&quot;投稿须知&quot;&gt;&lt;/a&gt;投稿须知&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;[作者简介]&lt;/strong&gt; 郑伟，小米信息技术部架构组&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注：目前暂时只接受
+      
+    
+    </summary>
+    
+      <category term="投稿" scheme="http://xiaomi-info.github.com/categories/%E6%8A%95%E7%A8%BF/"/>
+    
+    
+      <category term="投稿" scheme="http://xiaomi-info.github.com/tags/%E6%8A%95%E7%A8%BF/"/>
+    
+  </entry>
   
   <entry>
     <title>React Native 启动版本检查机制探究</title>
