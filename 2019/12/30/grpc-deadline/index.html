@@ -171,7 +171,7 @@
 <h2 id="谁构造的带-timeout-的-context？"><a href="#谁构造的带-timeout-的-context？" class="headerlink" title="谁构造的带 timeout 的 context？"></a>谁构造的带 timeout 的 context？</h2><p>业务方的 gRPC handler 中对传入的 ctx 明显未做 <code>context.WithTimeout()</code> 处理，我们把目光投向客户端。业务方的 service graph 是这样：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ServiceA -&gt; ServiceB -&gt; ServiceC -&gt; xorm</span><br></pre></td></tr></table></figure>
 <p>当前反馈查询 xorm 报错的是 ServiceC，我们找到 ServiceB 看了下调用 ServiceC gRPC Handler 代码。<strong>ServiceB 中 ctx 来自 ServiceA，ServiceB 中拿到 ctx 后，也并未设置 timeout</strong>。</p>
-<p>看来即整个调用链发起方（只能到 ServiceA），通过 Review 代码我们发现 ServiceA 发起 RPC 调用时，确实传入了带 timeout 的 ctx：</p>
+<p>看来设置 timeout 的只可能是整个调用链发起方（即 ServiceA），通过 Review 代码我们发现 ServiceA 发起 RPC 调用时，确实传入了带 timeout 的 ctx：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InvokeServiceB 发起对 SerivceB 的 RPC 调用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InvokeServiceB</span><span class="params">()</span></span> &#123;</span><br><span class="line">...</span><br><span class="line">  ctx,_ := context.WithTimeout(ctx, <span class="number">3</span>*time.Second) <span class="comment">// 设置了 3 秒超时</span></span><br><span class="line">  response, err := grpcClient.ServicebBiz(ctx, request) <span class="comment">// 调用 ServiceB 的 RPC 时，使用的是上方定义的带 timeout 的 ctx</span></span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们将 ServiceA 中发起 RPC 调用的 ctx 超时设置成 10 秒，再测试发现 ServiceC 反馈的 <code>context deadline execcded</code> 报错消失了。</p>
 <h2 id="gRPC-超时如何做到跨进程传递？"><a href="#gRPC-超时如何做到跨进程传递？" class="headerlink" title="gRPC 超时如何做到跨进程传递？"></a>gRPC 超时如何做到跨进程传递？</h2><p>我们测试发现，不仅是 Go gRPC 服务之间超时可以传递（如果你拿到上游的 ctx 继续往下透传的话）。<strong>Go 和 Java 服务之间，超时也会随着调用链传递。</strong>那么 gRPC 的超时是如何做到跨进程跨语言传递的？</p>
@@ -226,16 +226,16 @@
       <div class="tags">
         <span>Tags:</span>
         
+  <a href="/tags#微服务" >
+    <span class="tag-code">微服务</span>
+  </a>
+
   <a href="/tags#Golang" >
     <span class="tag-code">Golang</span>
   </a>
 
   <a href="/tags#gRPC" >
     <span class="tag-code">gRPC</span>
-  </a>
-
-  <a href="/tags#微服务" >
-    <span class="tag-code">微服务</span>
   </a>
 
       </div>
